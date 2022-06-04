@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Dynamic image loading</title>	
+		<link rel="stylesheet" href="iw_examples.css"/>
+		<style>		
+		p {margin-bottom: 150px;}
+		</style>
+		
+		<script src="jquery.min.js">/* */</script>
+		
+		<script>
+		
+		//questa semplice funzione determina gli attuali bound verticali
+		//del viewport, cioè quale parte della pagina HTML è visibile
+		//nella finestra, e in base a questa informazione carica le
+		//immagini "visibili"
+		function showInWindow() {
+			let lower = $(window).scrollTop();
+			let higher = $(window).scrollTop()+$( window ).height();
+			//per ogni immagine nella pagina che abbia l'attributo
+			//utente data-src, cioè predisposta al caricamento on demand,
+			//ma NON l'attributo src, cioè che non è stata ancora effettivamente
+			//caricata...
+			$("img[data-src]:not([src])").each(function(){
+				let img = $(this);
+				//...verifico se l'immagine si trova nell'area visibile della pagina...
+				if (img.offset().top<higher && img.offset().top>lower) {
+				console.log("Caricamento "+img.attr("data-src"));
+				//...e in tal caso la faccio caricare dal browser semplicemente
+				//impostando il suo attributo src
+				img.attr("src",img.attr("data-src"));
+				}
+			});
+		}
+		
+		//quando il DOM è in stato ready, collego lo scroll del documento
+		//all'handler showInWindow
+		$(function() {
+				$(document).scroll(showInWindow);			
+				//la prima chiamata a showInWindow viene fatta manualmente
+				//per inizializzare la parte già visibile della pagina
+				showInWindow();
+		});		
+		</script>
+
+</head>
+<body>
+
+<h1>Caricamento dinamico delle immagini in una pagina con JQuery</h1>
+<p>Provate a scrollare la pagina e controllate sulla console Javascript i messaggi che indicano il caricamento delle immagini.
+</p>
+
+<p>Testo</p>
+
+<p>Testo</p>
+
+<!-- Notare che le immagini non hanno una src, quindi non verranno inizialmente caricate -->
+<!-- Attenzione: è necessario dare (almeno) una height a tutte le immagini senza src, per evitare che si appiattiscano -->
+<p><img data-src="daisy.jpg" height="100" alt="daisy"/></p>
+<p><img data-src="goofy.gif" height="100"  alt="goofy"/></p>
+<p><img data-src="donald.jpg" height="100"  alt="donald"/></p>
+<p><img data-src="mickey.jpg" height="100" alt="mickey"/></p>
+<p><img data-src="minnie.jpg" height="100"  alt="minnie"/></p>
+<p><img data-src="pluto.jpg" height="100"  alt="pluto"/></p>
+	
+</body>
+</html>
